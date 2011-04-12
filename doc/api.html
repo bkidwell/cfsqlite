@@ -1,0 +1,676 @@
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+<html>
+<head>
+<title>Component cfsqlite</title>
+<style>
+body  {
+	font-family: verdana, arial, helvetica, sans-serif;
+	background-color: #FFFFFF;
+	font-size: 12px;
+	margin-top: 10px;
+	margin-left: 10px;
+}
+
+table	{
+	font-size: 11px;
+	font-family: Verdana, arial, helvetica, sans-serif;
+	width: 90%;
+}
+
+th {
+	padding: 6px;
+	font-size: 12px;
+	background-color: #cccccc;
+}
+
+td {
+	padding: 6px;
+	background-color: #eeeeee;
+	vertical-align : top;
+}
+
+code {
+	color: #000099 ;
+}
+</style>
+
+</head>
+<body style="padding-bottom : 800px;">
+
+<font size="-2">app_cfsqlite.lib.cfsqlite</font><br>
+<font size="+1"><b>Component cfsqlite
+
+</b></font>
+
+<br><br><br>
+<table>
+<a href="/CFIDE/componentutils/cfcexplorer.cfc?method=getcfcinhtml&name=WEB-INF.cftags.component">WEB-INF.cftags.component</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;app_cfsqlite.lib.cfsqlite<br>
+</td></tr>
+
+
+<tr><td>path:</td>
+	<td>\\vboxsvr\kidwellb\workspace\cfsqlite\lib\cfsqlite.cfc</td>
+</tr>
+
+<p><br />
+
+<p><b>cfsqlite</b> version 0.1 &ndash; Handles setting up access to SQLite
+database files from ColdFusion.</p>
+
+<p>See documentation <a href="https://github.com/bkidwell/cfsqlite">online</a>
+or the <b>README.html</b> included with this library.</p>
+
+<p>Copyright &copy; 2011 Brendan Kidwell</p>
+
+<p>Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above copyright
+notice and this permission notice appear in all copies.</p>
+
+<p>THE SOFTWARE IS PROVIDED &quot;AS IS&quot; AND THE AUTHOR DISCLAIMS ALL
+WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER
+RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
+NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE
+USE OR PERFORMANCE OF THIS SOFTWARE.</p>
+
+</p>
+
+<tr><td>properties:</td>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<br>
+	<td> <a href="#property_ApplicationName">ApplicationName</a>, <a href="#property_DSN">DSN</a>, <a href="#property_DsnPrefix">DsnPrefix</a>, <a href="#property_Ready">Ready</a></td>
+</tr>
+
+<tr><td>methods:</td>
+	
+	
+	
+	
+	
+	
+		
+	
+	
+	
+	
+	
+	
+		
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+		
+	
+	
+	
+	
+	
+	
+		
+	
+	
+	
+	<td> <a href="#method_CreateDatasource">CreateDatasource</a>*, <a href="#method_FindSqlite">FindSqlite</a>*, <a href="#method_GetDSN">GetDSN</a>, <a href="#method_Init">Init</a>, <a href="#method_Msg_CfideLogin">Msg_CfideLogin</a>*, <a href="#method_Msg_SqliteNotFound">Msg_SqliteNotFound</a>*</td>
+</tr>
+
+
+
+
+
+</table>
+<font size="-2">* - private method</font>
+
+<br><br><table>
+<tr>
+	<th>Property</th>
+	<th>Hint</th>
+	<th>Type</th>
+	<th>Req.</th>
+	<th>Implemented In</th>
+	<th>Default Value</th>
+</tr>
+
+	
+	
+	<tr>
+		<td><a name="property_ApplicationName"><b>ApplicationName</b></a> 
+			</td>
+		<td>Current Application Name</td>
+		<td>
+				struct
+			</td>
+		<td></td>
+		<td>cfsqlite
+		</td>
+		<td>
+				-
+			</td>
+		</tr>
+
+	
+	
+	<tr>
+		<td><a name="property_DSN"><b>DSN</b></a> 
+			</td>
+		<td>Cache of already created/found Data Source Names</td>
+		<td>
+				struct
+			</td>
+		<td></td>
+		<td>cfsqlite
+		</td>
+		<td>
+				-
+			</td>
+		</tr>
+
+	
+	
+	<tr>
+		<td><a name="property_DsnPrefix"><b>DsnPrefix</b></a> 
+			</td>
+		<td>Prefix for all SQLite data source names</td>
+		<td>
+				string
+			</td>
+		<td></td>
+		<td>cfsqlite
+		</td>
+		<td>
+				
+					sqlite
+				
+			</td>
+		</tr>
+
+	
+	
+	<tr>
+		<td><a name="property_Ready"><b>Ready</b></a> 
+			</td>
+		<td>Component was successfully initialized</td>
+		<td>
+				boolean
+			</td>
+		<td></td>
+		<td>cfsqlite
+		</td>
+		<td>
+				-
+			</td>
+		</tr>
+
+</table>
+
+<br><br><table>
+
+
+	
+	
+	
+	
+	
+	<tr><th align="left" colspan="1">
+		<a name="method_CreateDatasource">CreateDatasource</a>*
+		
+		</th></tr>
+	<tr><td>
+	
+	
+	
+	<code>
+	
+		<i>private</i>
+	
+	
+		<i>void</i>
+	
+	<b>CreateDatasource</b>
+	
+	(
+ 	
+		
+		<i>
+		
+		string
+		</i>
+		File,
+	
+		
+		<i>
+		
+		string
+		</i>
+		DSN
+		
+	)
+	</i>
+	</code>
+	<br><br>	
+	
+	
+	Display and consume form to login to CFIDE API and create data source for this SQLite database<br><br>
+	
+	Output: suppressed<br>
+	
+	
+	
+		Parameters:<br>
+		
+			
+			&nbsp;&nbsp; <b>File:</b>
+			string,
+			optional,
+			File
+			- Full fath to SQLite database file
+			<br>
+		
+			
+			&nbsp;&nbsp; <b>DSN:</b>
+			string,
+			optional,
+			DSN
+			- CF data source name
+			<br>
+		
+	
+	
+	<br>
+	</td></tr>
+
+
+	
+	
+	
+	
+	
+	<tr><th align="left" colspan="1">
+		<a name="method_FindSqlite">FindSqlite</a>*
+		
+		</th></tr>
+	<tr><td>
+	
+	
+	
+	<code>
+	
+		<i>private</i>
+	
+	
+		<i>void</i>
+	
+	<b>FindSqlite</b>
+	
+	(
+ 		
+	)
+	</i>
+	</code>
+	<br><br>	
+	
+	
+	Ensure that the SQLite JDBC library is loadable.<br><br>
+	
+	Output: suppressed<br>
+	
+	
+	
+	<br>
+	</td></tr>
+
+
+	
+	
+	
+	
+	
+	<tr><th align="left" colspan="1">
+		<a name="method_GetDSN">GetDSN</a>
+		
+		</th></tr>
+	<tr><td>
+	
+	
+	
+	<code>
+	
+		<i>public</i>
+	
+	
+		<i>string</i>
+	
+	<b>GetDSN</b>
+	
+	(
+ 	
+		
+		<i>
+		
+		string
+		</i>
+		File
+		
+	)
+	</i>
+	</code>
+	<br><br>	
+	
+	
+	Get a DSN for an SQLite database file. This method can be called as
+	many times as needed to setup more than one database file.<br><br>
+	
+	Output: suppressed<br>
+	
+	
+	
+		Parameters:<br>
+		
+			
+			&nbsp;&nbsp; <b>File:</b>
+			string,
+			optional,
+			File
+			- Full fath to SQLite database file
+			<br>
+		
+	
+	
+	<br>
+	</td></tr>
+
+
+	
+	
+	
+	
+	
+	<tr><th align="left" colspan="1">
+		<a name="method_Init">Init</a>
+		
+		</th></tr>
+	<tr><td>
+	
+	
+	
+	<code>
+	
+		<i>public</i>
+	
+	
+		<i>cfsqlite</i>
+	
+	<b>Init</b>
+	
+	(
+ 	
+		
+		<i>
+		required
+		string
+		</i>
+		ApplicationName,
+	
+		
+		<i>
+		
+		
+		</i>
+		GlobalContainer="#Application#",
+	
+		
+		<i>
+		
+		string
+		</i>
+		DsnPrefix="sqlite"
+		
+	)
+	</i>
+	</code>
+	<br><br>	
+	
+	
+	<b style="color: Red;">This method must be called before the
+	component can be used.</b><br><br>
+	
+	Output: suppressed<br>
+	
+	
+	
+		Parameters:<br>
+		
+			
+			&nbsp;&nbsp; <b>ApplicationName:</b>
+			string,
+			required,
+			ApplicationName
+			- The name of the current application
+			<br>
+		
+			
+			&nbsp;&nbsp; <b>GlobalContainer:</b>
+			any,
+			optional,
+			GlobalContainer
+			- (<b>struct</b>) Where to store application-level global singleton instance of this
+		component
+			<br>
+		
+			
+			&nbsp;&nbsp; <b>DsnPrefix:</b>
+			string,
+			optional,
+			DsnPrefix
+			- Prefix for all SQLite data source names
+			<br>
+		
+	
+	
+	<br>
+	</td></tr>
+
+
+	
+	
+	
+	
+	
+	<tr><th align="left" colspan="1">
+		<a name="method_Msg_CfideLogin">Msg_CfideLogin</a>*
+		
+		</th></tr>
+	<tr><td>
+	
+	
+	
+	<code>
+	
+		<i>private</i>
+	
+	
+		<i>string</i>
+	
+	<b>Msg_CfideLogin</b>
+	
+	(
+ 	
+		
+		<i>
+		
+		string
+		</i>
+		File,
+	
+		
+		<i>
+		required
+		boolean
+		</i>
+		BadCredentials,
+	
+		
+		<i>
+		
+		string
+		</i>
+		Username="",
+	
+		
+		<i>
+		
+		string
+		</i>
+		Password=""
+		
+	)
+	</i>
+	</code>
+	<br><br>	
+	
+	
+	Form: Input ColdFusion CFIDE login<br><br>
+	
+	Output: suppressed<br>
+	
+	
+	
+		Parameters:<br>
+		
+			
+			&nbsp;&nbsp; <b>File:</b>
+			string,
+			optional,
+			File
+			- Full fath to SQLite database file
+			<br>
+		
+			
+			&nbsp;&nbsp; <b>BadCredentials:</b>
+			boolean,
+			required,
+			BadCredentials
+			- Credentials were entered but were invalid?
+			<br>
+		
+			
+			&nbsp;&nbsp; <b>Username:</b>
+			string,
+			optional,
+			Username
+			- Current username value
+			<br>
+		
+			
+			&nbsp;&nbsp; <b>Password:</b>
+			string,
+			optional,
+			Password
+			- Current password value
+			<br>
+		
+	
+	
+	<br>
+	</td></tr>
+
+
+	
+	
+	
+	
+	
+	<tr><th align="left" colspan="1">
+		<a name="method_Msg_SqliteNotFound">Msg_SqliteNotFound</a>*
+		
+		</th></tr>
+	<tr><td>
+	
+	
+	
+	<code>
+	
+		<i>private</i>
+	
+	
+		<i>string</i>
+	
+	<b>Msg_SqliteNotFound</b>
+	
+	(
+ 	
+		
+		<i>
+		required
+		string
+		</i>
+		TargetFolder
+		
+	)
+	</i>
+	</code>
+	<br><br>	
+	
+	
+	Error message: SQLite library not found<br><br>
+	
+	Output: suppressed<br>
+	
+	
+	
+		Parameters:<br>
+		
+			
+			&nbsp;&nbsp; <b>TargetFolder:</b>
+			string,
+			required,
+			TargetFolder
+			- Where to install sqlite-*.jar
+			<br>
+		
+	
+	
+	<br>
+	</td></tr>
+
+	
+
+</table>
+
+</body></html>
