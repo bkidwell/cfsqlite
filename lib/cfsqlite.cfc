@@ -172,7 +172,7 @@ THIS SOFTWARE.
 	<ol>
 		<li>Download <b>sqlite-*.jar</b> from
 		<a href="http://www.zentus.com/sqlitejdbc/">www.zentus.com/sqlitejdbc</a>
-		or from the <a href="https://github.com/bkidwell/cfsqlite/lib">cfsqlite web site</a>.
+		or from the <a href="https://github.com/bkidwell/cfsqlite">cfsqlite web site</a>.
 		</li>
 		<li>Place the jar file in &quot;#Arguments.TargetFolder#&quot;.</li>
 		<li>Restart your ColdFusion application server.</li>
