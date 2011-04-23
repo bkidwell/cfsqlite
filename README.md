@@ -5,7 +5,7 @@ Handles setting up access to SQLite database files from ColdFusion.
 ## SYNOPSIS
 
     <cfset Request.dsn =
-        CreateObject("component", "MYAPP.lib.sqlite").Init()
+        CreateObject("component", "MYAPP.lib.cfsqlite").Init()
         .GetDSN( ExpandPath("../database/DATABASE_NAME.db"), this.name )>
 
 ## DESCRIPTION
@@ -27,7 +27,7 @@ Handles setting up access to SQLite database files from ColdFusion.
     <!--- In Application.onRequestStart() event handler... --->
     
     <cfset Request.dsn =
-        CreateObject("component", "MYAPP.lib.sqlite").Init()
+        CreateObject("component", "MYAPP.lib.cfsqlite").Init()
         .GetDSN( ExpandPath("../database/sample.db"), this.name )>`
     
     <!--- In your page... --->
