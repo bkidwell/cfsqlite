@@ -1,9 +1,9 @@
-<cfcomponent output="false" hint="<br /><p><b>cfsqlite</b> version 0.11 &ndash;
-Handles setting up access to SQLite database files from ColdFusion.</p>
+<cfcomponent output="false" hint="<br /><p><b>cfsqlite.cfc</b> version 0.20
+&ndash; Handles setting up access to SQLite database files from ColdFusion.</p>
 <p><a href=""https://github.com/bkidwell/cfsqlite"">Home page on github</a><p>
 "><!---
 
-# cfsqlite
+# cfsqlite.cfc
 
 Handles setting up access to SQLite database files from ColdFusion.
 
@@ -11,7 +11,7 @@ Handles setting up access to SQLite database files from ColdFusion.
 
     <cfset Request.dsn =
         CreateObject("component", "MYAPP.lib.cfsqlite").Init("MYAPP")
-        .GetDSN( ExpandPath("../database/DATABASE_NAME.db"), this.name )>
+        .GetDSN( ExpandPath("../database/DATABASE_NAME.db") )>
 
 ## DESCRIPTION
 
@@ -91,6 +91,9 @@ standalone SQLite database browser/editor to do that.
 ColdFusion 8
 
 ## HISTORY
+
+Version 0.20 -- added **cfsqliteschema** library and cleaned up documentation
+for the main **cfsqlite** library.
 
 Version 0.11 -- embedded documentation into component source code and cleaned
 up some bad URLs.

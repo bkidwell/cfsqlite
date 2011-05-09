@@ -1,13 +1,13 @@
-<cfcomponent output="false" hint="<br /><p><b>cfsqliteschema</b> version 0.11
-&ndash; Reads and modifies SQLite schema from a data source and provides
+<cfcomponent output="false" hint="<br /><p><b>cfsqliteschema.cfc</b> version
+0.20 &ndash; Reads and modifies SQLite schema from a data source and provides
 simple record loading and saving objects.</p>
 <p><a href=""https://github.com/bkidwell/cfsqlite"">Home page on github</a><p>
 "><!---
 
-# cfsqliteschema
+# cfsqliteschema.cfc
 
 Reads and modifies SQLite schema from a data source and provides simple record
-loading and saving objects
+loading and saving objects.
 
 ## SYNOPSIS
 
@@ -21,7 +21,8 @@ loading and saving objects
 	<cfset schema.DropAllObjects()>
 
 	Create Table:
-	<cfset schema.CreateTable("TABLE_NAME", "COLUMN_1, (SQLite column spec 1)", "COLUMN_2, (SQLite column spec 2)", ...)>
+	<cfset schema.CreateTable("TABLE_NAME", "COLUMN_1, (SQLite column spec 1)",
+		"COLUMN_2, (SQLite column spec 2)", ...)>
 
 	Create empty record as a struct struct:
 	<cfset rec=schema.Record("TABLE_NAME")>

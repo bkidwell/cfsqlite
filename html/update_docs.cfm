@@ -22,7 +22,7 @@ source tree.
 <title>">
 <cfset html_head_2="</title>
 <style>
-	h1 { font-family: sans-serif; font-size: 125%; }
+	h1 { font-family: sans-serif; font-size: 130%; }
 	h2 { font-family: sans-serif; font-size: 115%; }
 </style>
 </head><body>">
