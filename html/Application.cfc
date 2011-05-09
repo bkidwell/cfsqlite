@@ -18,7 +18,7 @@
 	<cfset sqlite=CreateObject("component", "app.lib.cfsqlite").Init(this.name)>
 	<cfset Request.DSN=sqlite.GetDSN(ExpandPath("../database/sample.db"))>
 
-<cfreturn true>
+	<cfreturn true>
 </cffunction>
 
 </cfcomponent>

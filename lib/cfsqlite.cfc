@@ -10,7 +10,7 @@ Handles setting up access to SQLite database files from ColdFusion.
 ## SYNOPSIS
 
     <cfset Request.dsn =
-        CreateObject("component", "MYAPP.lib.cfsqlite").Init()
+        CreateObject("component", "MYAPP.lib.cfsqlite").Init("MYAPP")
         .GetDSN( ExpandPath("../database/DATABASE_NAME.db"), this.name )>
 
 ## DESCRIPTION
@@ -24,7 +24,7 @@ memory).
 
 2. Ensure that [SqliteJDBC](http://www.zentus.com/sqlitejdbc/) is available in
 the Java "extensions" folder and is loadable. If not, it displays an error page
-prompting the user to download the **sqlitejdbc** to ColdFusion's JRE's "ext"
+prompting the user to download the **sqlitejdbc** to ColdFusion's JRE's `ext`
 folder.
 
 3. Compute a standardized ColdFusion Data Source Name
@@ -43,12 +43,23 @@ into a library running in the application's process, thereby allowing developers
 to get up and running with a project quickly without setting up a separate
 enterprise database engine. It's great for distributing sample/howto code.
 
+## INSTALLATION
+
+1. Copy `lib/cfsqlite.cfc` into your application's `ext` or `lib` folder, or
+wherever you store external libraries.
+
+2. Copy `sqlitejdbc-v056.jar` to the `lib/ext` folder under your ColdFusion
+installation's JRE.
+
+(The other files you see in the distribution of this library are for testing and
+preparing the documentation.)
+
 ## EXAMPLE
 
     [comment] In Application.onRequestStart() event handler... [/comment]
     
     <cfset Request.dsn =
-        CreateObject("component", "MYAPP.lib.cfsqlite").Init()
+        CreateObject("component", "MYAPP.lib.cfsqlite").Init("MYAPP")
         .GetDSN( ExpandPath("../database/sample.db"), this.name )>`
     
     [comment] In your page... [/comment]
