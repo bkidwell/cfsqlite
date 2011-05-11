@@ -368,6 +368,7 @@ THIS SOFTWARE.
 
 	<cfargument name="File" type="string" hint="Full fath to SQLite database file">
 	<cfargument name="DSN" type="string" hint="CF data source name">
+	<!--- TODO: add option to create database file if it doesn't exist --->
 	<cfset var username="">
 	<cfset var password="">
 	<cfset var badCredentials=false>
