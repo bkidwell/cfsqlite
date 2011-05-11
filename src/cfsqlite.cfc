@@ -1,72 +1,63 @@
-<cfcomponent output="false" hint="<br /><p><b>cfsqlite.cfc</b> version 0.20
-&ndash; Handles setting up access to SQLite database files from ColdFusion.</p>
+<cfcomponent output="false" hint="<br /><p><b>cfsqlite.cfc</b> from cfsqlite
+version 1.0<p>
+<p>Handles setting up access to SQLite database files as Data Sources in
+ColdFusion.</p>
 <p><a href=""https://github.com/bkidwell/cfsqlite"">Home page on github</a><p>
 "><!---
 
-# cfsqlite.cfc
+# cfsqlite.cfc from cfsqlite version 1.0
 
-Handles setting up access to SQLite database files from ColdFusion.
-
-## SYNOPSIS
-
-    <cfset Request.dsn =
-        CreateObject("component", "MYAPP.lib.cfsqlite").Init("MYAPP")
-        .GetDSN( ExpandPath("../database/DATABASE_NAME.db") )>
+Handles setting up access to SQLite database files as Data Sources in ColdFusion.
 
 ## DESCRIPTION
 
-**cfsqlite** is a ColdFusion library that facilitates quick setup of
-[SQLite](http://sqlite.org/) databases inside your application. If you call
-**cfsqlite.GetDSN()** at the start of each request, it will do the following:
+**cfsqlite.cfc** can be called at the start of each request (in the
+`onRequestStart()` Application event) to map a database filename to a ColdFusion
+Data Source Name, for example:
 
-1. Act as a singleton object (only one instance per application; save time and
-memory).
+    <cfset Request.dsn =
+        CreateObject("component", "MYAPP.lib.cfsqlite").Init(this.name)
+        .GetDSN( ExpandPath("../database/DATABASE_NAME.db") )>
 
-2. Ensure that [SqliteJDBC](http://www.zentus.com/sqlitejdbc/) is available in
-the Java "extensions" folder and is loadable. If not, it displays an error page
-prompting the user to download the **sqlitejdbc** to ColdFusion's JRE's `ext`
-folder.
+and that's all you have to do. Now you can use `#Request.dsn#` as your
+`datasource` in any `cfquery` call anywhere in your application.
 
-3. Compute a standardized ColdFusion Data Source Name
-("sqlite.**APPNAME**.**BASE\_FILENAME**") and determine if there already a
-database attached there. If the Data Source Name doesn't exist, it prompts the
-user for a username and password for the **/CFIDE** Administration interface and
-installs the database.
+Behind the scenes, cfsqlite does a few things:
 
-... and if **cfsqlite** wasn't interrupted by any setup tasks, it will return
-the Data Source Name to use in your queries.
+1. Make sure that SQLiteJDBC is available in ColdFusion's JRE's `lib/ext`
+folder. If not, the request is aborted and an error message instructs the user
+to install the library. (This library is included in the distribution of
+cfsqlite, but it can't be installed automatically because normally ColdFusion
+applications do not have sufficient privileges to write to the ColdFusion
+engine's files.)
 
-**cfsqlite** should only be used in a development or demonstration environment,
-unless you're sure you know what you're doing. SQLite does not handle multiple
-concurrent users well. SQLite's strength is in integrating the database engine
-into a library running in the application's process, thereby allowing developers
-to get up and running with a project quickly without setting up a separate
-enterprise database engine. It's great for distributing sample/howto code.
+2. If it hasn't already done so, cfsqlite installs the Data Source Name in the
+ColdFusion settings using a predictable name based upon the application name and
+database filename. In order to install the Data Source Name, cfsqlite aborts the
+request and prompts the user for credentials to authenticate to the
+`cfide.adminapi` back-end.
 
-## INSTALLATION
+3. If the above two conditions are satisfied, the request continues normally and
+cfsqlite returns the Data Source Name.
 
-1. Copy `lib/cfsqlite.cfc` into your application's `ext` or `lib` folder, or
-wherever you store external libraries.
-
-2. Copy `sqlitejdbc-v056.jar` to the `lib/ext` folder under your ColdFusion
-installation's JRE.
-
-(The other files you see in the distribution of this library are for testing and
-preparing the documentation.)
+After the first database access in an application instance, the Data Source Name
+is cached by cfsqlite, so calling `GetDSN()` at the start of each request does
+not incur any delay.
 
 ## EXAMPLE
 
     [comment] In Application.onRequestStart() event handler... [/comment]
     
     <cfset Request.dsn =
-        CreateObject("component", "MYAPP.lib.cfsqlite").Init("MYAPP")
-        .GetDSN( ExpandPath("../database/sample.db"), this.name )>`
+        CreateObject("component", "MYAPP.lib.cfsqlite").Init(this.name)
+        .GetDSN( ExpandPath("../database/stats.db"), this.name )>`
     
     [comment] In your page... [/comment]
+	
     <cfquery name="data" datasource="#Request.dsn#">
         SELECT value FROM data WHERE key='hit_count'
     </cfquery>
-
+    
     <cfset hit_count=data.value + 1>
     <cfquery datasource="#Request.dsn#">
         UPDATE data SET value=#hit_count# WHERE key='hit_count'
@@ -78,49 +69,24 @@ preparing the documentation.)
 
 ## NOTES
 
-**cfsqlite** will create ColdFusion Data Sources, but it will never delete them
+cfsqlite will create ColdFusion Data Sources, but it will never delete them
 automatically. That's up to you.
 
-**cfsqlite** will not create SQLite database files for you. Use your favorite
-standalone SQLite database browser/editor to do that.
-
-**Do not put your SQLite database file a directory that is web-accessible!**
+<b style="color: red;">Do not put your SQLite database file in a folder that is
+web-accessible!</b>
 
 ## REQUIREMENTS
 
 ColdFusion 8
 
-## HISTORY
-
-Version 0.20 -- added **cfsqliteschema** library and cleaned up documentation
-for the main **cfsqlite** library.
-
-Version 0.11 -- embedded documentation into component source code and cleaned
-up some bad URLs.
-
-Version 0.10 -- initial release
-
-## HOMEPAGE
-
-[cfsqlite web site](https://github.com/bkidwell/cfsqlite)
-
 ## SEE ALSO
-
-doc/api.html -- **cfsqlite** API documentation
 
 [SQLite](http://sqlite.org/) web site; [syntax
 documentation](http://sqlite.org/lang.html).
 
 [sqlitejdbc](http://www.zentus.com/sqlitejdbc/) JDBC driver for Java.
 
-## AUTHOR
-
-Brendan Kidwell <[brendan@glump.net](mailto:brendan@glump.net)\>.
-
-Please drop me a line if you find **cfsqlite** useful (or if you find a
-problem.)
-
-## COPYRIGHT
+---><!---
 
 Copyright © 2011 Brendan Kidwell
 
@@ -139,13 +105,13 @@ THIS SOFTWARE.
 --->
 
 <cfproperty name="Ready" type="boolean"
-	hint="Component was successfully initialized">	
+	hint="Component was successfully initialized.">
 <cfproperty name="ApplicationName" type="struct"
-	hint="Current Application Name">
+	hint="Current Application Name.">
 <cfproperty name="DSN" type="struct"
-	hint="Cache of already created/found Data Source Names">
+	hint="Cache of already created/found Data Source names.">
 <cfproperty name="DsnPrefix" type="string" default="sqlite"
-	hint="Prefix for all SQLite data source names">
+	hint="Prefix for all SQLite Data Source names.">
 
 <cfset TAB=Chr(9)>
 <cfset HTML_BEGIN="<!DOCTYPE html PUBLIC ""-//W3C//DTD XHTML 1.0 Transitional//EN""
@@ -249,8 +215,7 @@ THIS SOFTWARE.
 
 <cffunction name="Init"
 	access="public" output="false" returnType="cfsqlite"
-	hint="<b style=""color: Red;"">This method must be called before the
-	component can be used.</b>">
+	hint="Constructor.">
 	
 	<cfargument name="ApplicationName" type="string" required="true"
 		hint="The name of the current application">
@@ -333,10 +298,15 @@ THIS SOFTWARE.
 	</cfif>
 
 	<cflock timeout="90" scope="Application" type="exclusive">
-	
 		<cfset dbName=GetFileFromPath(Arguments.file)>
 		<cfset dbName=ListDeleteAt(dbName, ListLen(dbName, "."), ".")>
 		<cfset dsn="#this.DsnPrefix#.#this.applicationName#.#dbName#">
+
+		<cfif NOT FileExists(Arguments.file)>
+			<!--- Create parent directories and an empty file --->
+			<cfset CreateObject("java", "java.io.File").Init(GetDirectoryFromPath(Arguments.file)).mkdirs()>
+			<cffile action="write" file="#Arguments.file#" output="">
+		</cfif>
 	
 		<cftry>
 			<!--- Can we access the database? --->
@@ -368,7 +338,6 @@ THIS SOFTWARE.
 
 	<cfargument name="File" type="string" hint="Full fath to SQLite database file">
 	<cfargument name="DSN" type="string" hint="CF data source name">
-	<!--- TODO: add option to create database file if it doesn't exist --->
 	<cfset var username="">
 	<cfset var password="">
 	<cfset var badCredentials=false>

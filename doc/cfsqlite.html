@@ -1,54 +1,50 @@
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv=""Content-Type"" content=""text/html; charset=utf-8"">
 <title>cfsqlite.cfc</title>
+</title>
 <style>
-	h1 { font-family: sans-serif; font-size: 130%; }
-	h2 { font-family: sans-serif; font-size: 115%; }
+	body { margin: 10px 30px; }
+	h1 { font-family: sans-serif; font-size: 130%; margin-left: -20px; }
+	h2 { font-family: sans-serif; font-size: 115%; margin-left: -20px; }
+	h3 { font-family: sans-serif; font-size: 100%; margin-left: -20px; }
 </style>
-</head><body><h1>cfsqlite.cfc</h1>
+</head><body>
+<h1>cfsqlite.cfc from cfsqlite version 1.0</h1>
 
-<p>Handles setting up access to SQLite database files from ColdFusion.</p>
-
-<h2>SYNOPSIS</h2>
-
-<pre><code>&lt;cfset Request.dsn =
-    CreateObject("component", "MYAPP.lib.cfsqlite").Init("MYAPP")
-    .GetDSN( ExpandPath("../database/DATABASE_NAME.db") )&gt;
-</code></pre>
+<p>Handles setting up access to SQLite database files as Data Sources in ColdFusion.</p>
 
 <h2>DESCRIPTION</h2>
 
-<p><strong>cfsqlite</strong> is a ColdFusion library that facilitates quick setup of <a href="http://sqlite.org/">SQLite</a> databases inside your application. If you call <strong>cfsqlite.GetDSN()</strong> at the start of each request, it will do the following:</p>
+<p><strong>cfsqlite.cfc</strong> can be called at the start of each request (in the <code>onRequestStart()</code> Application event) to map a database filename to a ColdFusion Data Source Name, for example:</p>
+
+<pre><code>&lt;cfset Request.dsn =
+    CreateObject("component", "MYAPP.lib.cfsqlite").Init(this.name)
+    .GetDSN( ExpandPath("../database/DATABASE_NAME.db") )&gt;
+</code></pre>
+
+<p>and that's all you have to do. Now you can use <code>#Request.dsn#</code> as your <code>datasource</code> in any <code>cfquery</code> call anywhere in your application.</p>
+
+<p>Behind the scenes, cfsqlite does a few things:</p>
 
 <ol>
-<li><p>Act as a singleton object (only one instance per application; save time and memory).</p></li>
-<li><p>Ensure that <a href="http://www.zentus.com/sqlitejdbc/">SqliteJDBC</a> is available in the Java "extensions" folder and is loadable. If not, it displays an error page prompting the user to download the <strong>sqlitejdbc</strong> to ColdFusion's JRE's <code>ext</code> folder.</p></li>
-<li><p>Compute a standardized ColdFusion Data Source Name ("sqlite.<strong>APPNAME</strong>.<strong>BASE_FILENAME</strong>") and determine if there already a database attached there. If the Data Source Name doesn't exist, it prompts the user for a username and password for the <strong>/CFIDE</strong> Administration interface and installs the database.</p></li>
+<li><p>Make sure that SQLiteJDBC is available in ColdFusion's JRE's <code>lib/ext</code> folder. If not, the request is aborted and an error message instructs the user to install the library. (This library is included in the distribution of cfsqlite, but it can't be installed automatically because normally ColdFusion applications do not have sufficient privileges to write to the ColdFusion engine's files.)</p></li>
+<li><p>If it hasn't already done so, cfsqlite installs the Data Source Name in the ColdFusion settings using a predictable name based upon the application name and database filename. In order to install the Data Source Name, cfsqlite aborts the request and prompts the user for credentials to authenticate to the <code>cfide.adminapi</code> back-end.</p></li>
+<li><p>If the above two conditions are satisfied, the request continues normally and cfsqlite returns the Data Source Name.</p></li>
 </ol>
 
-<p>... and if <strong>cfsqlite</strong> wasn't interrupted by any setup tasks, it will return the Data Source Name to use in your queries.</p>
-
-<p><strong>cfsqlite</strong> should only be used in a development or demonstration environment, unless you're sure you know what you're doing. SQLite does not handle multiple concurrent users well. SQLite's strength is in integrating the database engine into a library running in the application's process, thereby allowing developers to get up and running with a project quickly without setting up a separate enterprise database engine. It's great for distributing sample/howto code.</p>
-
-<h2>INSTALLATION</h2>
-
-<ol>
-<li><p>Copy <code>lib/cfsqlite.cfc</code> into your application's <code>ext</code> or <code>lib</code> folder, or wherever you store external libraries.</p></li>
-<li><p>Copy <code>sqlitejdbc-v056.jar</code> to the <code>lib/ext</code> folder under your ColdFusion installation's JRE.</p></li>
-</ol>
-
-<p>(The other files you see in the distribution of this library are for testing and preparing the documentation.)</p>
+<p>After the first database access in an application instance, the Data Source Name is cached by cfsqlite, so calling <code>GetDSN()</code> at the start of each request does not incur any delay.</p>
 
 <h2>EXAMPLE</h2>
 
 <pre><code>&lt;!--- In Application.onRequestStart() event handler... ---&gt;
 
 &lt;cfset Request.dsn =
-    CreateObject("component", "MYAPP.lib.cfsqlite").Init("MYAPP")
-    .GetDSN( ExpandPath("../database/sample.db"), this.name )&gt;`
+    CreateObject("component", "MYAPP.lib.cfsqlite").Init(this.name)
+    .GetDSN( ExpandPath("../database/stats.db"), this.name )&gt;`
 
 &lt;!--- In your page... ---&gt;
+
 &lt;cfquery name="data" datasource="#Request.dsn#"&gt;
     SELECT value FROM data WHERE key='hit_count'
 &lt;/cfquery&gt;
@@ -65,47 +61,58 @@
 
 <h2>NOTES</h2>
 
-<p><strong>cfsqlite</strong> will create ColdFusion Data Sources, but it will never delete them automatically. That's up to you.</p>
+<p>cfsqlite will create ColdFusion Data Sources, but it will never delete them automatically. That's up to you.</p>
 
-<p><strong>cfsqlite</strong> will not create SQLite database files for you. Use your favorite standalone SQLite database browser/editor to do that.</p>
-
-<p><strong>Do not put your SQLite database file a directory that is web-accessible!</strong></p>
+<p><b style="color: red;">Do not put your SQLite database file in a folder that is web-accessible!</b></p>
 
 <h2>REQUIREMENTS</h2>
 
 <p>ColdFusion 8</p>
 
-<h2>HISTORY</h2>
-
-<p>Version 0.20 -- added <strong>cfsqliteschema</strong> library and cleaned up documentation for the main <strong>cfsqlite</strong> library.</p>
-
-<p>Version 0.11 -- embedded documentation into component source code and cleaned up some bad URLs.</p>
-
-<p>Version 0.10 -- initial release</p>
-
-<h2>HOMEPAGE</h2>
-
-<p><a href="https://github.com/bkidwell/cfsqlite">cfsqlite web site</a></p>
-
 <h2>SEE ALSO</h2>
-
-<p>doc/api.html -- <strong>cfsqlite</strong> API documentation</p>
 
 <p><a href="http://sqlite.org/">SQLite</a> web site; <a href="http://sqlite.org/lang.html">syntax documentation</a>.</p>
 
 <p><a href="http://www.zentus.com/sqlitejdbc/">sqlitejdbc</a> JDBC driver for Java.</p>
 
-<h2>AUTHOR</h2>
+<h2>PROPERTIES</h2>
 
-<p>Brendan Kidwell &lt;<a href="mailto:brendan@glump.net">brendan@glump.net</a>>.</p>
+<dl><dt><i>struct</i> <b>ApplicationName</b></dt>
+<dd>Current Application Name.</dd>
+<dt><i>struct</i> <b>DSN</b></dt>
+<dd>Cache of already created/found Data Source names.</dd>
+<dt><i>string</i> <b>DsnPrefix</b></dt>
+<dd>Prefix for all SQLite Data Source names.</dd>
+<dt><i>boolean</i> <b>Ready</b></dt>
+<dd>Component was successfully initialized.</dd></dl>
 
-<p>Please drop me a line if you find <strong>cfsqlite</strong> useful (or if you find a problem.)</p>
+<h2>FUNCTIONS</h2>
 
-<h2>COPYRIGHT</h2>
+<h3>GetDSN</h3>
 
-<p>Copyright © 2011 Brendan Kidwell</p>
+<p><code>GetDSN(File)</code></p>
 
-<p>Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted, provided that the above copyright notice and this permission notice appear in all copies.</p>
+<p>Get a DSN for an SQLite database file. This method can be called as many times as needed to setup more than one database file.</p>
 
-<p>THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</p>
-</body></html>
+<p>access: <code>public</code><br>
+returns: <code>string</code></p>
+
+<dl><dt><i>optional</i> <code>string</code> <b><code>File</code></b></dt><dd>Full fath to SQLite database file</dd></dl>
+
+<h3>Init</h3>
+
+<p><code>Init(ApplicationName, GlobalContainer, DsnPrefix)</code></p>
+
+<p>Constructor.</p>
+
+<p>access: <code>public</code><br>
+returns: <code>cfsqlite</code></p>
+
+<dl><dt><code>string</code> <b><code>ApplicationName</code></b></dt><dd>The name of the current application</dd>
+
+<dt><i>optional</i> <b><code>GlobalContainer</code></b> <span style="color: Gray;">(default "#Application#")</span></dt><dd>(<b>struct</b>) Where to store application-level global singleton instance of this component</dd>
+
+<dt><i>optional</i> <code>string</code> <b><code>DsnPrefix</code></b> <span style="color: Gray;">(default "sqlite")</span></dt><dd>Prefix for all SQLite data source names</dd></dl>
+
+</body>
+</html>

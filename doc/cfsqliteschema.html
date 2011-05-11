@@ -1,0 +1,191 @@
+<html>
+<head>
+<meta http-equiv=""Content-Type"" content=""text/html; charset=utf-8"">
+<title>cfsqliteschema.cfc</title>
+</title>
+<style>
+	body { margin: 10px 30px; }
+	h1 { font-family: sans-serif; font-size: 130%; margin-left: -20px; }
+	h2 { font-family: sans-serif; font-size: 115%; margin-left: -20px; }
+	h3 { font-family: sans-serif; font-size: 100%; margin-left: -20px; }
+</style>
+</head><body>
+<h1>cfsqliteschema.cfc from cfsqlite version 1.0</h1>
+
+<p>Provides convenience functions for clearing and creating empty databases and also a rudimentary object model for a database row.</p>
+
+<h2>DESCRIPTION</h2>
+
+<p><strong>cfsqliteschema.cfc</strong> can be instantiated once for each SQLite database and kept in an <code>Application</code>-scope variable. The library is meant to work side-by-side with normal <code>cfquery</code>-style database access, while adding a few convenience functions to save time with SQLite-specific tasks.</p>
+
+<p>A <code>cfsqliteschema</code> instance contains a map of your database schema:</p>
+
+<pre><code>_dsn # data source name
+_tableNames      # list of table names
+TABLE1 = {
+    _name        # name of this table
+    _columnNames # list of column names
+    _sql         # SQL statement that created the table
+    COLUMN1 = {
+        name     # name of this column
+        type     # data type from SQL CREATE TABLE statement
+        class    # SQLite storage class name
+        cftype   # for use in &lt;cfqueryparam cfsqltype="..."&gt;
+    }
+    COLUMN2 = { ... }
+    ...
+}
+TABLE2 = { ... }
+...
+</code></pre>
+
+<p>So for example, to find the correct <code>cfsqltype</code> value for a <code>cfqueryparam</code> involving the <code>text</code> column in the <code>comment</code> table, use</p>
+
+<pre><code>&lt;cfqueryparam cfsqltype="#schema.comment.text.cftype#" value="..."&gt;
+</code></pre>
+
+<p>The table names and column names are stored specifically in the structure to ensure correct spelling of both and to remember the default order of column names.</p>
+
+<p>After the first database access in an application instance, the schema is cached by cfsqlite, so instantiating <code>cfsqliteschema</code> at the start of each request does not incur a delay. (You must explicitly <code>Refresh()</code> the structure if you change your database structure outside of your application.)</p>
+
+<h2>EXAMPLE</h2>
+
+<pre><code>&lt;!--- Instantiation ---&gt;
+&lt;cfset DSN="...DATASOURCE NAME..."&gt;
+&lt;cfset schema=CreateObject("component", "MYAPP.lib.cfsqliteschema").Init(DSN)&gt;
+
+&lt;!--- Data definition ---&gt;
+&lt;cfset schema.DeleteAllObjects()&gt;
+&lt;cfset schema.CreateTable(
+    "comment",
+    "id PK",
+    "author_name TEXT",
+    "date TEXT",
+    "text TEXT"
+)&gt;
+
+&lt;!--- Record loading and saving ---&gt;
+&lt;cfset rec=schema.Record("comment")&gt;
+&lt;cfset rec.author_name="me")&gt;
+&lt;cfset rec.date=Now()&gt;
+&lt;cfset rec.text="some text")&gt;
+&lt;cfset rec.Save()&gt;
+&lt;cfset id=rec.id&gt;
+&lt;cfset rec=schema.Record("comment").Load(id)&gt;
+&lt;cfset rec.text="other text")&gt;
+&lt;cfset rec.Save()&gt;
+
+&lt;!--- Compact the database ---&gt;
+&lt;cfset schema.Compact()&gt;
+</code></pre>
+
+<h2>REQUIREMENTS</h2>
+
+<p>ColdFusion 8</p>
+
+<h2>SEE ALSO</h2>
+
+<p><a href="http://sqlite.org/">SQLite</a> web site; <a href="http://sqlite.org/lang.html">syntax documentation</a>.</p>
+
+<h2>PROPERTIES</h2>
+
+<dl><dt><b>_dsn</b></dt>
+<dd>Data Source name.</dd></dl>
+
+<h2>FUNCTIONS</h2>
+
+<h3>Compact</h3>
+
+<p><code>Compact()</code></p>
+
+<p>Compact the database.</p>
+
+<p>access: <code>public</code><br>
+returns: <code>cfsqliteschema</code></p>
+
+<dl></dl>
+
+<h3>CreateIndex</h3>
+
+<p><code>CreateIndex(IndexName, Table, ColumnList, RequireUnique)</code></p>
+
+<p>Create new index in the database.</p>
+
+<p>access: <code>public</code><br>
+returns: <code>cfsqliteschema</code></p>
+
+<dl><dt><code>string</code> <b><code>IndexName</code></b></dt><dd>Name of the new index</dd>
+
+<dt><code>string</code> <b><code>Table</code></b></dt><dd>Table containing the target column</dd>
+
+<dt><code>string</code> <b><code>ColumnList</code></b></dt><dd>List of columns to be used as the index key following the format of the <a href="http://www.sqlite.org/syntaxdiagrams.html#indexed-column">indexed-column</a> part of an SQLite <code>CREATE INDEX</code> statement.</dd>
+
+<dt><i>optional</i> <code>boolean</code> <b><code>RequireUnique</code></b> <span style="color: Gray;">(default "false")</span></dt><dd>Include <code>UNIQUE</code> constraing on the index.</dd></dl>
+
+<h3>CreateTable</h3>
+
+<p><code>CreateTable(Table, Column1, Column2, Column3)</code></p>
+
+<p>Create new table in the database. The first argument is the name of the table, and all subsequent arguments are column specifications as you would give them in an SQLite <code>CREATE TABLE</code> statement. &quot;<code>PK</code>&quot; in a column specification is a shortcut for &quot;<code>INTEGER PRIMARY KEY AUTOINCREMENT</code>&quot;. See <a href="http://http://www.sqlite.org/lang_createtable.html">SQLite documentation for CREATE TABLE</a>. (Don't forget to call <code>Refresh()</code> after your last <code>CreateTable()</code>.)</p>
+
+<p>access: <code>public</code><br>
+returns: <code>cfsqliteschema</code></p>
+
+<dl><dt><code>string</code> <b><code>Table</code></b></dt><dd></dd>
+
+<dt><code>string</code> <b><code>Column1</code></b></dt><dd></dd>
+
+<dt><i>optional</i> <code>string</code> <b><code>Column2</code></b></dt><dd></dd>
+
+<dt><i>optional</i> <code>string</code> <b><code>Column3</code></b></dt><dd>... and so on</dd></dl>
+
+<h3>DropAllObjects</h3>
+
+<p><code>DropAllObjects()</code></p>
+
+<p>Drop all Tables, Views, Indices, and Triggers; compact the database; refresh schema. Use this method to reset the database to an empty state.</p>
+
+<p>access: <code>public</code><br>
+returns: <code>cfsqliteschema</code></p>
+
+<dl></dl>
+
+<h3>Init</h3>
+
+<p><code>Init(dsn, GlobalContainer)</code></p>
+
+<p>Constructor.</p>
+
+<p>access: <code>public</code><br>
+returns: <code>cfsqliteschema</code></p>
+
+<dl><dt><code>string</code> <b><code>dsn</code></b></dt><dd>The datasource name to scan</dd>
+
+<dt><i>optional</i> <b><code>GlobalContainer</code></b> <span style="color: Gray;">(default "#Application#")</span></dt><dd>(<b>struct</b>) Where to store application-level global cache of database schemas.</dd></dl>
+
+<h3>Record</h3>
+
+<p><code>Record(Table, Query)</code></p>
+
+<p>Get a <code>struct</code> representing an empty database row.</p> <p>The returned <code>struct</code> has two extra methods added to it: <code>Load(id)</code> loads the record from the database with the given <code>id</code> value; <code>Save()</code> saves changes to the database. The <code>Save()</code> method inserts a new row or updates an existing row.</p> <p>For this method to work, the table's primary key must be called <code>id</code>.</p>
+
+<p>access: <code>public</code><br>
+returns: <code>struct</code></p>
+
+<dl><dt><code>string</code> <b><code>Table</code></b></dt><dd>Name of the table to create an empty record for.</dd>
+
+<dt><i>optional</i> <code>query</code> <b><code>Query</code></b></dt><dd>A <code>query</code> object whose current record will be loaded into the <code>cfsqliterecord</code> object. Default is a blank record.</dd></dl>
+
+<h3>Refresh</h3>
+
+<p><code>Refresh()</code></p>
+
+<p>Refresh the schema from the live database.</p>
+
+<p>access: <code>public</code><br>
+returns: <code>cfsqliteschema</code></p>
+
+<dl></dl>
+
+</body>
+</html>

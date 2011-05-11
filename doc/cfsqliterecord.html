@@ -1,0 +1,86 @@
+<html>
+<head>
+<meta http-equiv=""Content-Type"" content=""text/html; charset=utf-8"">
+<title>cfsqliterecord.cfc</title>
+</title>
+<style>
+	body { margin: 10px 30px; }
+	h1 { font-family: sans-serif; font-size: 130%; margin-left: -20px; }
+	h2 { font-family: sans-serif; font-size: 115%; margin-left: -20px; }
+	h3 { font-family: sans-serif; font-size: 100%; margin-left: -20px; }
+</style>
+</head><body>
+<h1>cfsqliterecord.cfc from cfsqlite version 1.0</h1>
+
+<p>Provides a simple object to represent an SQLite database row.</p>
+
+<h2>DESCRIPTION</h2>
+
+<p><strong>cfsqliterecord.cfc</strong> can be instantiated from the <code>cfsqliteschema.Record()</code> method, or you can also create an instance directly by passing in a <code>cfsqliteschema</code> instance and a table name to the <code>cfsqliterecord.Init()</code> method.</p>
+
+<p>The <code>cfsqliterecord</code> object contains a field for each column in the table it was instantiated from. Upon <code>Save()</code>, only fields that were changes since the last <code>Load()</code> are written to the database.</p>
+
+<p>To insert a new row in a table with an autonumber primary key column, leave the <code>id</code> column empty, and it will be filled in after <code>Save()</code> returns.</p>
+
+<h2>EXAMPLE</h2>
+
+<p>(See example in <code>cfsqliteschema.cfc</code>.)</p>
+
+<h2>REQUIREMENTS</h2>
+
+<p>ColdFusion 8</p>
+
+<h2>SEE ALSO</h2>
+
+<p><a href="http://sqlite.org/">SQLite</a> web site; <a href="http://sqlite.org/lang.html">syntax documentation</a>.</p>
+
+<h2>PROPERTIES</h2>
+
+<dl><dt><i>string</i> <b>_dsn</b></dt>
+<dd>Data Source name.</dd>
+<dt><i>string</i> <b>_table</b></dt>
+<dd>Table name.</dd></dl>
+
+<h2>FUNCTIONS</h2>
+
+<h3>Init</h3>
+
+<p><code>Init(Schema, Table, Query)</code></p>
+
+<p>Constructor.</p>
+
+<p>access: <code>public</code><br>
+returns: <code>cfsqliterecord</code></p>
+
+<dl><dt><code>cfsqliteschema</code> <b><code>Schema</code></b></dt><dd>A <code>cfsqliteschema</code> instance</dd>
+
+<dt><code>string</code> <b><code>Table</code></b></dt><dd>Table name</dd>
+
+<dt><i>optional</i> <code>query</code> <b><code>Query</code></b></dt><dd>A <code>query</code> object whose current record will be loaded into the <code>cfsqliterecord</code> object. Default is a blank record.</dd></dl>
+
+<h3>Load</h3>
+
+<p><code>Load(ID, IDColumnName)</code></p>
+
+<p>Load a record with the given id.</p>
+
+<p>access: <code>public</code><br>
+returns: <code>cfsqliterecord</code></p>
+
+<dl><dt><b><code>ID</code></b></dt><dd>Value in 'id' column</dd>
+
+<dt><i>optional</i> <code>string</code> <b><code>IDColumnName</code></b> <span style="color: Gray;">(default "id")</span></dt><dd>Name of primary key column</dd></dl>
+
+<h3>Save</h3>
+
+<p><code>Save(IDColumnName)</code></p>
+
+<p>Save a record.</p>
+
+<p>access: <code>public</code><br>
+returns: <code>cfsqliterecord</code></p>
+
+<dl><dt><i>optional</i> <code>string</code> <b><code>IDColumnName</code></b> <span style="color: Gray;">(default "id")</span></dt><dd>Name of primary key column</dd></dl>
+
+</body>
+</html>

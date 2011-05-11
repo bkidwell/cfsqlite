@@ -17,6 +17,8 @@
 	<cfset var sqlite="">
 
 	<cfset sqlite=CreateObject("component", "app_cfsqlite.cfsqlite").Init(this.name)>
+	<cfset Request.TestDSN=sqlite.GetDSN(ExpandPath("../database/test.db"))>
+	<cfset Request.TestSchema=CreateObject("component", "app_cfsqlite.cfsqliteschema").Init(Request.TestDSN)>
 	<!---
 	<cfset Request.DSN=sqlite.GetDSN(ExpandPath("../database/sample.db"))>
 	--->

@@ -1,68 +1,55 @@
-<cfcomponent output="false" hint="<br /><p><b>cfsqliteschema.cfc</b> version
-0.20 &ndash; Reads and modifies SQLite schema from a data source and provides
-simple record loading and saving objects.</p>
+<cfcomponent output="false" hint="<br /><p><b>cfsqliteschema.cfc</b>
+from cfsqlite version 1.0<p>
+<p>Reads and modifies SQLite schema from a data source and provides simple
+record loading and saving objects.</p>
 <p><a href=""https://github.com/bkidwell/cfsqlite"">Home page on github</a><p>
 "><!---
 
-# cfsqliteschema.cfc
+# cfsqliteschema.cfc from cfsqlite version 1.0
 
-Reads and modifies SQLite schema from a data source and provides simple record
-loading and saving objects.
-
-## SYNOPSIS
-
-    Instantiate:
-	<cfset schema=CreateObject("component", "MYAPP.lib.cfsqliteschema").Init(DSN)>
-
-	Refresh if schema changed by external process
-	<cfset schema.Refresh()>
-
-	Drop all Tables, Views, Indices, and Triggers (automatic compact afterwards):
-	<cfset schema.DropAllObjects()>
-
-	Create Table:
-	<cfset schema.CreateTable("TABLE_NAME", "COLUMN_1, (SQLite column spec 1)",
-		"COLUMN_2, (SQLite column spec 2)", ...)>
-
-	Create empty record as a struct struct:
-	<cfset rec=schema.Record("TABLE_NAME")>
-	
-	Load a record with a given value in 'id' column:
-	<cfset rec=schema.Record("TABLE_NAME").Load("ID")>
-	
-	Load a record from the current record in a query object:
-	<cfset rec=schema.Record("TABLE_NAME").Load(QUERY_NAME)>
-	
-	Edit record:
-	<cfset rec.col1="a value">
-	<cfset rec.col2="another value">
-	<cfset rec.Save()>
-	
-	Compact the database:
-	<cfset schema.Compact()>
+Provides convenience functions for clearing and creating empty databases and
+also a rudimentary object model for a database row.
 
 ## DESCRIPTION
 
-**cfsqliteschema** is a ColdFusion library that provides shortcuts for accessing
-records in [SQLite](http://sqlite.org/) databases as `structs` and for creating
-tables in a new SQLite database. It is designed to work side-by-side with normal
-`cfquery`-style database access.
+**cfsqliteschema.cfc** can be instantiated once for each SQLite database and
+kept in an `Application`-scope variable. The library is meant to work
+side-by-side with normal `cfquery`-style database access, while adding a few
+convenience functions to save time with SQLite-specific tasks.
 
-**cfsqliteschema** should only be used in a development or demonstration
-environment, unless you're sure you know what you're doing. SQLite does not
-handle multiple concurrent users well. SQLite's strength is in integrating the
-database engine into a library running in the application's process, thereby
-allowing developers to get up and running with a project quickly without setting
-up a separate enterprise database engine. It's great for distributing
-sample/howto code.
+A `cfsqliteschema` instance contains a map of your database schema:
 
-## INSTALLATION
+	_dsn # data source name
+	_tableNames      # list of table names
+	TABLE1 = {
+		_name        # name of this table
+		_columnNames # list of column names
+		_sql         # SQL statement that created the table
+		COLUMN1 = {
+			name     # name of this column
+			type     # data type from SQL CREATE TABLE statement
+			class    # SQLite storage class name
+			cftype   # for use in <cfqueryparam cfsqltype="...">
+		}
+		COLUMN2 = { ... }
+		...
+	}
+	TABLE2 = { ... }
+	...
 
-1. Copy `lib/cfsqliteschema.cfc` into your application's `ext` or `lib` folder, or
-wherever you store external libraries.
+So for example, to find the correct `cfsqltype` value for a `cfqueryparam`
+involving the `text` column in the `comment` table, use
 
-(The other files you see in the distribution of this library are for testing and
-preparing the documentation.)
+	<cfqueryparam cfsqltype="#schema.comment.text.cftype#" value="...">
+
+The table names and column names are stored specifically in the structure to
+ensure correct spelling of both and to remember the default order of column
+names.
+
+After the first database access in an application instance, the schema is cached
+by cfsqlite, so instantiating `cfsqliteschema` at the start of each request does
+not incur a delay. (You must explicitly `Refresh()` the structure if you change
+your database structure outside of your application.)
 
 ## EXAMPLE
 
@@ -74,10 +61,10 @@ preparing the documentation.)
 	<cfset schema.DeleteAllObjects()>
 	<cfset schema.CreateTable(
 		"comment",
-		"id, PK",
-		"author_name, TEXT",
-		"date, TEXT",
-		"text, TEXT"
+		"id PK",
+		"author_name TEXT",
+		"date TEXT",
+		"text TEXT"
 	)>
 	
 	[comment] Record loading and saving [/comment]
@@ -91,47 +78,19 @@ preparing the documentation.)
 	<cfset rec.text="other text")>
 	<cfset rec.Save()>
 	
-	[comment] Compact the database [/compact]
+	[comment] Compact the database [/comment]
 	<cfset schema.Compact()>
-
-## NOTES
-
-**cfsqliteschema** is meant to be used in combination with **cfsqlite** which
-handles setting up data sources in the ColdFusion global configuration, but
-**cfsqliteschema** is an independent library.
-
-When creating a table, a column spec is given as an optional data type name
-followed by optional SQLite data definition keywords such as "`PRIMARY KEY`".
-"`PK`" is a shortcut for "`INTEGER PRIMARY KEY AUTOINCREMENT`".
 
 ## REQUIREMENTS
 
 ColdFusion 8
 
-## HISTORY
-
-Version 0.20 -- first release of **cfsqlite** library collection including
-**cfsqliteschema**.
-
-## HOMEPAGE
-
-[cfsqlite web site](https://github.com/bkidwell/cfsqlite)
-
 ## SEE ALSO
-
-doc/api-cfsqliteschema.html -- **cfsqliteschema** API documentation
 
 [SQLite](http://sqlite.org/) web site; [syntax
 documentation](http://sqlite.org/lang.html).
 
-## AUTHOR
-
-Brendan Kidwell <[brendan@glump.net](mailto:brendan@glump.net)\>.
-
-Please drop me a line if you find **cfsqlite** useful (or if you find a
-problem.)
-
-## COPYRIGHT
+---><!---
 
 Copyright © 2011 Brendan Kidwell
 
@@ -149,7 +108,7 @@ THIS SOFTWARE.
 
 --->
 
-<cfproperty name="_dsn" hint="Datasource name">
+<cfproperty name="_dsn" hint="Data Source name.">
 
 <!--- reserved words to filter out when looking for SQL data type in DDL string --->
 <cfset KEYWORDS="ABORT,ACTION,ADD,AFTER,ALL,ALTER,ANALYZE,AND,AS,ASC," &
@@ -167,26 +126,39 @@ THIS SOFTWARE.
 
 <cffunction name="Init"
 	access="public" output="false" returnType="cfsqliteschema"
-	hint="Constructor">
+	hint="Constructor.">
 		
 	<cfargument name="dsn" type="string" required="true"
 		hint="The datasource name to scan">
-	<cfset var tablesQ="">
-	<cfset var table="">
-	<cfset var tableNamesA=ArrayNew(1)>
+	<cfargument name="GlobalContainer" default="##Application##"
+		hint="(<b>struct</b>) Where to store application-level global cache of
+		database schemas.">
 
-	<cfset this._dsn=Arguments.dsn>
-	<cfdbinfo datasource="#Request.DSN#" name="tablesQ" type="tables">
+	<cfif NOT IsStruct(Arguments.GlobalContainer)>
+		<cfset Arguments.GlobalContainer=Application>
+	</cfif>
 
-	<cfloop query="tablesQ">
-		<cfif Left(tablesQ.table_name, 7) NEQ "SQLITE_">
-			<cfset table=ScanTable(tablesQ.table_name)>
-			<cfset this[tablesQ.table_name]=table>
-			<cfset ArrayAppend(tableNamesA, table._name)>
-		</cfif>
-	</cfloop>
+	<cfif NOT IsDefined("Arguments.GlobalContainer.cfsqliteschemas")>
+		<cflock timeout="90" scope="Application" type="exclusive">
+			<cfset Arguments.GlobalContainer.cfsqliteschemas=StructNew()>
+		</cflock>
+	</cfif>
+	
+	<!--- append "?resetcfsqlite=1" to URL to reset while debugging --->
+	<cfif
+		StructKeyExists(Arguments.GlobalContainer.cfsqliteschemas, Arguments.dsn) AND
+		NOT IsDefined("URL.resetcfsqlite")
+	>
+		<!--- return cached schema from Application scope --->
+		<cfreturn Arguments.GlobalContainer.cfsqliteschemas[Arguments.dsn]>
+	</cfif>
+	
+	<cflock timeout="90" scope="Application" type="exclusive">
+		<cfset this._dsn=Arguments.dsn>
+		<cfset Refresh()>
+		<cfset Arguments.GlobalContainer.cfsqliteschemas[Arguments.dsn]=this>
+	</cflock>
 
-	<cfset this._tableNames=ArrayToList(tableNamesA)>
 	<cfreturn this>	
 </cffunction>
 
@@ -300,6 +272,141 @@ THIS SOFTWARE.
 	<!--- Otherwise, the affinity is NUMERIC. --->
 	<cfreturn "NUMERIC,CF_SQL_NUMERIC">
 	
+</cffunction>
+
+<cffunction name="Refresh"
+	access="public" output="false" returnType="cfsqliteschema"
+	hint="Refresh the schema from the live database.">
+
+	<cfset var tablesQ="">
+	<cfset var table="">
+	<cfset var tableNamesA=ArrayNew(1)>
+
+	<cfdbinfo datasource="#this._dsn#" name="tablesQ" type="tables">
+
+	<cfloop query="tablesQ">
+		<cfif Left(tablesQ.table_name, 7) NEQ "SQLITE_" AND tablesQ.table_type EQ "TABLE">
+			<cfset table=ScanTable(tablesQ.table_name)>
+			<cfset this[tablesQ.table_name]=table>
+			<cfset ArrayAppend(tableNamesA, table._name)>
+		</cfif>
+	</cfloop>
+
+	<cfset this._tableNames=ArrayToList(tableNamesA)>
+	<cfreturn this>
+</cffunction>
+
+<cffunction name="DropAllObjects"
+	access="public" output="false" returnType="cfsqliteschema"
+	hint="Drop all Tables, Views, Indices, and Triggers; compact the database;
+	refresh schema. Use this method to reset the database to an empty state.">
+
+	<cfquery name="tables" datasource="#this._dsn#">
+		SELECT type, name FROM sqlite_master WHERE type IN ('table', 'index', 'view', 'trigger')
+	</cfquery>
+	<cfloop query="tables">
+		<cfif Left(tables.name, 7) NEQ "sqlite_"><cfquery datasource="#this._dsn#">
+			DROP #tables.type# IF EXISTS "#tables.name#"
+		</cfquery></cfif>
+	</cfloop>
+	<cfset Compact()>
+	<cfset Refresh()>
+	<cfreturn this>
+</cffunction>
+
+<cffunction name="CreateTable"
+	access="public" output="false" returnType="cfsqliteschema"
+	hint="Create new table in the database. The first argument is the name of
+	the table, and all subsequent arguments are column specifications as you
+	would give them in an SQLite <code>CREATE TABLE</code> statement.
+	&quot;<code>PK</code>&quot; in a column specification is a shortcut for
+	&quot;<code>INTEGER PRIMARY KEY AUTOINCREMENT</code>&quot;. See
+	<a href=""http://http://www.sqlite.org/lang_createtable.html"">SQLite
+	documentation for CREATE TABLE</a>. (Don't forget to call
+	<code>Refresh()</code> after your last <code>CreateTable()</code>.)">
+
+	<cfargument name="Table" type="string" required="true">
+	<cfargument name="Column1" type="string" required="true">
+	<cfargument name="Column2" type="string">
+	<cfargument name="Column3" type="string" hint="... and so on">
+	<cfset var cols="">
+	<cfset var column="">
+	<cfset var i="">
+	
+	<cfset cols=ArrayNew(1)>
+	<cfloop index="i" from="2" to="#ArrayLen(Arguments)#">
+		<cfset column=Arguments[i]>
+		<cfif IsDefined("column") AND Len(column) GT 0>
+			<cfif Right(column, 3) EQ " PK">
+				<cfset column=Left(column, Len(column) - 2) & "INTEGER PRIMARY KEY AUTOINCREMENT">
+			</cfif>
+			<cfset ArrayAppend(cols, column)>
+		</cfif>
+	</cfloop>
+	<cfquery datasource="#this._dsn#">
+		CREATE TABLE "#Arguments.Table#" (
+			#ArrayToList(cols, ", ")#
+		)
+	</cfquery>
+	
+	<cfreturn this>
+</cffunction>
+
+<cffunction name="CreateIndex"
+	access="public" output="false" returnType="cfsqliteschema"
+	hint="Create new index in the database.">
+	
+	<cfargument name="IndexName" type="string" required="true"
+		hint="Name of the new index">
+	<cfargument name="Table" type="string" required="true"
+		hint="Table containing the target column">
+	<cfargument name="ColumnList" type="string" required="true"
+		hint="List of columns to be used as the index key following the format
+		of the
+		<a href=""http://www.sqlite.org/syntaxdiagrams.html##indexed-column"">indexed-column</a>
+		part of an SQLite <code>CREATE INDEX</code> statement.">
+	<cfargument name="RequireUnique" type="boolean" default="false"
+		hint="Include <code>UNIQUE</code> constraing on the index.">
+
+	<cfquery datasource="#this._dsn#">
+		CREATE <cfif Arguments.RequireUnique>UNIQUE</cfif> INDEX
+		"#Arguments.IndexName#" ON "#Arguments.Table#" (#Arguments.ColumnList#)
+	</cfquery>
+	
+	<cfreturn this>
+</cffunction>
+
+<cffunction name="Compact"
+	access="public" output="false" returnType="cfsqliteschema"
+	hint="Compact the database.">
+	
+	<cfquery datasource="#this._dsn#">VACUUM</cfquery>
+	<cfreturn this>
+</cffunction>
+
+<cffunction name="Record"
+	access="public" output="false" returnType="struct"
+	hint="<p>Get a <code>struct</code> representing an empty database row.</p>
+	<p>The returned <code>struct</code> has two extra methods added to it:
+	<code>Load(id)</code> loads the record from the database with the given
+	<code>id</code> value; <code>Save()</code> saves changes to the database.
+	The <code>Save()</code> method inserts a new row or updates an existing
+	row.</p>
+	<p>For this method to work, the table's primary key must be called
+	<code>id</code>.</p>">
+
+	<cfargument name="Table" type="string" required="true"
+		hint="Name of the table to create an empty record for.">
+	<cfargument name="Query" type="query"
+		hint="A <code>query</code> object whose current record will be loaded
+		into the <code>cfsqliterecord</code> object. Default is a blank
+		record.">
+
+	<cfif IsDefined("Arguments.Query")>
+		<cfreturn CreateObject("component", "cfsqliterecord").Init(this, Arguments.Table, Arguments.Query)>
+	<cfelse>
+		<cfreturn CreateObject("component", "cfsqliterecord").Init(this, Arguments.Table)>
+	</cfif>
 </cffunction>
 
 </cfcomponent>
