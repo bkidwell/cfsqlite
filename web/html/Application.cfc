@@ -10,13 +10,16 @@
 <cfset this.mappings = structNew()>
 <cfset this.customtagpaths = "">
 <cfset this.mappings["/app"]=ExpandPath("..")>
+<cfset this.mappings["/app_cfsqlite"]=ExpandPath("../../src")>
 
 <cffunction name="onRequestStart" returnType="boolean" output="false">
 	<cfargument name="thePage" type="string" required="true">
 	<cfset var sqlite="">
 
-	<cfset sqlite=CreateObject("component", "app.lib.cfsqlite").Init(this.name)>
+	<cfset sqlite=CreateObject("component", "app_cfsqlite.cfsqlite").Init(this.name)>
+	<!---
 	<cfset Request.DSN=sqlite.GetDSN(ExpandPath("../database/sample.db"))>
+	--->
 
 	<cfreturn true>
 </cffunction>
