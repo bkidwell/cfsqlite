@@ -1,7 +1,7 @@
 Copyright © 2011 Brendan Kidwell
 
 Use of cfsqlite, its test code, and documentation are subject to the following
-[TODO]-style license:
+BSD-style license:
 
 Permission to use, copy, modify, and/or distribute this software for any purpose
 with or without fee is hereby granted, provided that the above copyright notice
@@ -15,8 +15,23 @@ OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
 TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
 THIS SOFTWARE.
 
+--------
 
-cfsqlite makes use of sqlitejdbc by [TODO] in production, and it also includes
-markdownj by [TODO] and ColdFusion javaloader by [TODO], which are used in the
-ColdFusion site included in this to test and prepare documentation for cfsqlite.
-See the libraries' included LICENSE files for more information.
+cfsqlite makes use of the following libraries:
+
+sqlitejdbc -- Copyright © 2007 David Crawshaw
+
+  * Required to run cfsqlite
+  * BSD-style license included in ./ext/LICENSE-sqlitejdbc.txt
+  * Source code is available at http://www.zentus.com/sqlitejdbc/
+
+javaloader for ColdFusion -- Copyright © 2010 Mark Mandel
+
+  * Used only to prepare cfsqlite documentation
+  * Common Public License Version 1.0 included in ./web/ext/javaloader/license.txt
+
+markdownj -- Copyright © 2008 Pete Bevin, John Mutchek, and Alex Coles
+
+  * Used only to prepare cfsqlite documentation
+  * Web site says a "BSD license" applies, but it was not included in source or
+    binary for the library. See http://markdownj.org/ .
