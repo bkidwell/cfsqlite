@@ -277,7 +277,8 @@ THIS SOFTWARE.
 	hint="Get a DSN for an SQLite database file. This method can be called as
 	many times as needed to setup more than one database file.">
 
-	<cfargument name="File" type="string" hint="Full fath to SQLite database file">
+	<cfargument name="File" type="string" hint="Full fath to SQLite database
+	file. Complete path and file will be created if they don't already exist.">
 	<cfset var key="">
 	<cfset var dbName="">
 	<cfset var dsn="">

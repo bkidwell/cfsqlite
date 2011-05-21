@@ -10,7 +10,7 @@ Handles setting up access to SQLite database files as Data Sources in ColdFusion
         CreateObject("component", "MYAPP.lib.cfsqlite").Init(this.name)
         .GetDSN( ExpandPath("../database/DATABASE_NAME.db") )>
 
-and that's all you have to do. Now you can use `#Request.dsn#` as your `datasource` in any `cfquery` call anywhere in your application.
+and that's all you have to do. Now you can use `#Request.dsn#` as your `datasource` in any `cfquery` call anywhere in your application. If the folder and passed into `GetDSN()` don't exist, they will be created.
 
 **cfsqliteschema.cfc** provides some convenience functions related to SQLite:
 

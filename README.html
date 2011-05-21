@@ -23,7 +23,7 @@
     .GetDSN( ExpandPath("../database/DATABASE_NAME.db") )&gt;
 </code></pre>
 
-<p>and that's all you have to do. Now you can use <code>#Request.dsn#</code> as your <code>datasource</code> in any <code>cfquery</code> call anywhere in your application.</p>
+<p>and that's all you have to do. Now you can use <code>#Request.dsn#</code> as your <code>datasource</code> in any <code>cfquery</code> call anywhere in your application. If the folder and passed into <code>GetDSN()</code> don't exist, they will be created.</p>
 
 <p><strong>cfsqliteschema.cfc</strong> provides some convenience functions related to SQLite:</p>
 
