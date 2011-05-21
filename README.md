@@ -40,6 +40,8 @@ ColdFusion 8
 
 ## HISTORY
 
+Version 1.0.1 -- oops! more documentation fixes.
+
 Version 1.0 -- added `cfsqliteschema.cfc` and `cfsqliterecord.cfc`; added automatic creation of empty database; cleaned up documentation; announced on Freshmeat.
 
 Version 0.11 -- embedded documentation into component source code and cleaned up some bad URLs.

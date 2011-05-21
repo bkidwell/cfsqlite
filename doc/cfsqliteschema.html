@@ -63,6 +63,7 @@ TABLE2 = { ... }
     "date TEXT",
     "text TEXT"
 )&gt;
+&lt;cfset schema.Refresh()&gt;
 
 &lt;!--- Record loading and saving ---&gt;
 &lt;cfset rec=schema.Record("comment")&gt;
@@ -90,7 +91,9 @@ TABLE2 = { ... }
 <h2>PROPERTIES</h2>
 
 <dl><dt><b>_dsn</b></dt>
-<dd>Data Source name.</dd></dl>
+<dd>Data Source name.</dd>
+<dt><b>_tableNames</b></dt>
+<dd>List of table names with correct capitalization from the database.</dd></dl>
 
 <h2>FUNCTIONS</h2>
 
@@ -167,7 +170,7 @@ returns: <code>cfsqliteschema</code></p>
 
 <p><code>Record(Table, Query)</code></p>
 
-<p>Get a <code>struct</code> representing an empty database row.</p> <p>The returned <code>struct</code> has two extra methods added to it: <code>Load(id)</code> loads the record from the database with the given <code>id</code> value; <code>Save()</code> saves changes to the database. The <code>Save()</code> method inserts a new row or updates an existing row.</p> <p>For this method to work, the table's primary key must be called <code>id</code>.</p>
+<p>Get a <code>cfsqliterecord</code> instance representing an empty database row.</p>
 
 <p>access: <code>public</code><br>
 returns: <code>struct</code></p>

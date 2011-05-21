@@ -66,6 +66,7 @@ your database structure outside of your application.)
 		"date TEXT",
 		"text TEXT"
 	)>
+	<cfset schema.Refresh()>
 	
 	[comment] Record loading and saving [/comment]
 	<cfset rec=schema.Record("comment")>
@@ -109,6 +110,7 @@ THIS SOFTWARE.
 --->
 
 <cfproperty name="_dsn" hint="Data Source name.">
+<cfproperty name="_tableNames" hint="List of table names with correct capitalization from the database.">
 
 <!--- reserved words to filter out when looking for SQL data type in DDL string --->
 <cfset KEYWORDS="ABORT,ACTION,ADD,AFTER,ALL,ALTER,ANALYZE,AND,AS,ASC," &
@@ -386,14 +388,8 @@ THIS SOFTWARE.
 
 <cffunction name="Record"
 	access="public" output="false" returnType="struct"
-	hint="<p>Get a <code>struct</code> representing an empty database row.</p>
-	<p>The returned <code>struct</code> has two extra methods added to it:
-	<code>Load(id)</code> loads the record from the database with the given
-	<code>id</code> value; <code>Save()</code> saves changes to the database.
-	The <code>Save()</code> method inserts a new row or updates an existing
-	row.</p>
-	<p>For this method to work, the table's primary key must be called
-	<code>id</code>.</p>">
+	hint="<p>Get a <code>cfsqliterecord</code> instance representing an empty
+	database row.</p>">
 
 	<cfargument name="Table" type="string" required="true"
 		hint="Name of the table to create an empty record for.">

@@ -49,6 +49,7 @@ After the first database access in an application instance, the schema is cached
 		"date TEXT",
 		"text TEXT"
 	)>
+	<cfset schema.Refresh()>
 	
 	<!--- Record loading and saving --->
 	<cfset rec=schema.Record("comment")>
@@ -75,7 +76,9 @@ ColdFusion 8
 ## PROPERTIES
 
 <dl><dt><b>_dsn</b></dt>
-<dd>Data Source name.</dd></dl>
+<dd>Data Source name.</dd>
+<dt><b>_tableNames</b></dt>
+<dd>List of table names with correct capitalization from the database.</dd></dl>
 
 ## FUNCTIONS
 
@@ -152,7 +155,7 @@ returns: `cfsqliteschema`
 
 `Record(Table, Query)`
 
-<p>Get a <code>struct</code> representing an empty database row.</p> <p>The returned <code>struct</code> has two extra methods added to it: <code>Load(id)</code> loads the record from the database with the given <code>id</code> value; <code>Save()</code> saves changes to the database. The <code>Save()</code> method inserts a new row or updates an existing row.</p> <p>For this method to work, the table's primary key must be called <code>id</code>.</p>
+<p>Get a <code>cfsqliterecord</code> instance representing an empty database row.</p>
 
 access: `public`<br>
 returns: `struct`
