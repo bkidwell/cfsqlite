@@ -1,4 +1,4 @@
-# cfsqlite version 1.0
+# cfsqlite version 1.0.1
 
 Handles setting up access to SQLite database files as Data Sources in ColdFusion, and provides convenience functions for clearing and creating empty databases and also a rudimentary mapping of database rows to ColdFusion objects.
 
