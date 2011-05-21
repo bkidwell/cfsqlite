@@ -1,4 +1,4 @@
-# cfsqliterecord.cfc from cfsqlite version 1.0
+# cfsqliterecord.cfc from cfsqlite version 1.0.1
 
 Provides a simple object to represent an SQLite database row.
 

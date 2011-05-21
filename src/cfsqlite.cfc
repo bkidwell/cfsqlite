@@ -1,11 +1,11 @@
 <cfcomponent output="false" hint="<br /><p><b>cfsqlite.cfc</b> from cfsqlite
-version 1.0<p>
+version 1.0.1<p>
 <p>Handles setting up access to SQLite database files as Data Sources in
 ColdFusion.</p>
 <p><a href=""https://github.com/bkidwell/cfsqlite"">Home page on github</a><p>
 "><!---
 
-# cfsqlite.cfc from cfsqlite version 1.0
+# cfsqlite.cfc from cfsqlite version 1.0.1
 
 Handles setting up access to SQLite database files as Data Sources in ColdFusion.
 

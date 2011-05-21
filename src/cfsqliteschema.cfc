@@ -1,11 +1,11 @@
 <cfcomponent output="false" hint="<br /><p><b>cfsqliteschema.cfc</b>
-from cfsqlite version 1.0<p>
+from cfsqlite version 1.0.1<p>
 <p>Reads and modifies SQLite schema from a data source and provides simple
 record loading and saving objects.</p>
 <p><a href=""https://github.com/bkidwell/cfsqlite"">Home page on github</a><p>
 "><!---
 
-# cfsqliteschema.cfc from cfsqlite version 1.0
+# cfsqliteschema.cfc from cfsqlite version 1.0.1
 
 Provides convenience functions for clearing and creating empty databases and
 also a rudimentary object model for a database row.

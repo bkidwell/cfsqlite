@@ -1,4 +1,4 @@
-# cfsqlite.cfc from cfsqlite version 1.0
+# cfsqlite.cfc from cfsqlite version 1.0.1
 
 Handles setting up access to SQLite database files as Data Sources in ColdFusion.
 

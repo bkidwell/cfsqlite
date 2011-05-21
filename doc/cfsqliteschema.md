@@ -1,4 +1,4 @@
-# cfsqliteschema.cfc from cfsqlite version 1.0
+# cfsqliteschema.cfc from cfsqlite version 1.0.1
 
 Provides convenience functions for clearing and creating empty databases and also a rudimentary object model for a database row.
 

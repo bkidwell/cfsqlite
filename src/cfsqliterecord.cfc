@@ -1,10 +1,10 @@
 <cfcomponent output="false" hint="<br /><p><b>cfsqliterecord.cfc</b> from
-cfsqlite version 1.0</p>
+cfsqlite version 1.0.1</p>
 <p>Provides a simple object to represent an SQLite database row.</p>
 <p><a href=""https://github.com/bkidwell/cfsqlite"">Home page on github</a><p>
 "><!---
 
-# cfsqliterecord.cfc from cfsqlite version 1.0
+# cfsqliterecord.cfc from cfsqlite version 1.0.1
 
 Provides a simple object to represent an SQLite database row.
 
