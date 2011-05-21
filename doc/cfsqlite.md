@@ -83,7 +83,7 @@ Get a DSN for an SQLite database file. This method can be called as many times a
 access: `public`<br>
 returns: `string`
 
-<dl><dt><i>optional</i> <code>string</code> <b><code>File</code></b></dt><dd>Full fath to SQLite database file. Complete path and file will be created if they don't already exist.</dd></dl>
+<dl><dt><code>string</code> <b><code>File</code></b></dt><dd>Full fath to SQLite database file. Complete path and file will be created if they don't already exist.</dd></dl>
 
 ### Init
 
