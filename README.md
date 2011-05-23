@@ -38,6 +38,8 @@ To run the demo/test/documentation web site included in the cfsqlite distributio
 
 ColdFusion 8
 
+(Sorry, not tested with other ColdFusion engines. Please inform me of any issues with them and we'll see what we can do.)
+
 ## HISTORY
 
 Version 1.0.1 -- oops! more documentation fixes.
